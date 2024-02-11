@@ -1,6 +1,8 @@
 #pragma once
+
 #include <cmath>
 #include <iostream>
+#include "Utility.hpp"
 
 using std::sqrt;
 
@@ -52,6 +54,16 @@ class Vec3
             return  m_Elements[0] * m_Elements[0] +
                     m_Elements[1] * m_Elements[1] +
                     m_Elements[2] * m_Elements[2];
+        }
+
+        static Vec3 random()
+        {
+            return Vec3{random_double(), random_double(), random_double()};
+        }
+
+        static Vec3 random(double min, double max)
+        {
+            return Vec3{random_double(min, max), random_double(min, max), random_double(min, max)};
         }
 
         double m_Elements[3];
@@ -109,4 +121,31 @@ inline Vec3 cross(const Vec3& u, const Vec3& v)
 inline Vec3 unitVector(const Vec3& v)
 {
     return v / v.lenght();
+}
+
+inline Vec3 randomInUnitSphere()
+{
+    while(true)
+    {
+        const auto p = Vec3::random(-1, 1);
+        if(p.lenghtSquared() < 1)
+        {
+            return p;
+        }
+    }
+}
+
+inline Vec3 randomUnitVector()
+{
+    return unitVector(randomInUnitSphere());
+}
+
+inline Vec3 randomOnHemisphere(const Vec3& normal)
+{
+    auto onUnitSphere = randomUnitVector();
+    if(dot(onUnitSphere, normal) > 0)
+    {
+        return onUnitSphere;
+    }
+    return -onUnitSphere;
 }
